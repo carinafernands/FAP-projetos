@@ -138,7 +138,7 @@ function exibirMenu() {
         + "4-Consultar matricula\n"
         + "5-Cancelar matricula\n"
         + "6-Mudar de curso\n"
-        + "7- Adicionar aluno existente a um curso"
+        + "7- Adicionar aluno existente a um curso\n"
         + "8-Sair");
     var escolha = Number(readlineSync.question("\nDigite a opcao: "));
     switch (escolha) {
