@@ -20,22 +20,24 @@ var Aluno = /** @class */ (function () {
         return false;
     };
     Aluno.prototype.mudarCurso = function (curso) {
-        if (this.matricula === null) {
+        if (this.matricula === null || this.matricula.getCurso() === null) {
             console.log("Aluno não está matriculado em nenhum curso.");
             return;
         }
-        this.matricula.getCurso().removerAluno(this);
-        this.matricula.setCurso(curso);
-        curso.adicionarAlunos(this);
-        console.log("Aluno mudou de curso");
+        var cursoAtual = this.matricula.getCurso();
+        if (cursoAtual === null || cursoAtual === void 0 ? void 0 : cursoAtual.removerAluno(this)) {
+            this.matricula.setCurso(curso);
+            curso.adicionarAlunos(this);
+            console.log("Aluno mudou de curso");
+        }
     };
     Aluno.prototype.getCurso = function () {
-        var _a;
+        var _a, _b;
         if (((_a = this.matricula) === null || _a === void 0 ? void 0 : _a.getCurso()) == null) { //encadeamento opcional 
             return "Aluno não está em nenhum curso";
         }
         else {
-            return "Aluno matriculado no curso " + this.matricula.getCurso().getNomeCurso();
+            return "Aluno matriculado no curso " + ((_b = this.matricula.getCurso()) === null || _b === void 0 ? void 0 : _b.getNomeCurso());
         }
     };
     Aluno.prototype.getMatricula = function () {
@@ -44,12 +46,16 @@ var Aluno = /** @class */ (function () {
     Aluno.prototype.getNomeAluno = function () {
         return this.nomeAluno;
     };
+    Aluno.prototype.setMatricula = function (matricula) {
+        this.matricula = matricula;
+    };
     Aluno.idCounter = 0;
     return Aluno;
 }());
 exports.Aluno = Aluno;
 var Matricula = /** @class */ (function () {
     function Matricula(dataMatricula, curso) {
+        this.curso = null;
         Matricula.idCounter += 1;
         this.id = Matricula.idCounter;
         this.dataMatricula = dataMatricula;
@@ -81,9 +87,11 @@ var Curso = /** @class */ (function () {
         if (index !== -1) {
             this.alunos.splice(index, 1);
             console.log("Aluno removido do curso " + this.getNomeCurso());
+            return true;
         }
         else {
             console.log("Aluno não encontrado!");
+            return false;
         }
     };
     Curso.prototype.adicionarAlunos = function (aluno) {
