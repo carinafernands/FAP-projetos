@@ -50,6 +50,24 @@ const listarCursos = () => {
     exibirMenu();
 }
 
+const listarAlunos = () => {
+    if (listaAlunos.length > 0) {
+        console.log(listaAlunos);
+    } else {
+        console.log("Nao ha alunos cadastrados!");
+    }
+    exibirMenu();
+}
+
+const listarMatriculas = () => {
+    if (listaMatricula.length > 0) {
+        console.log(listaMatricula);
+    } else {
+        console.log("Nao ha matriculas cadastradas!");
+    }
+    exibirMenu();
+}
+
 const consultarMatricula = () => {
     const nome = readlineSync.question("Digite o nome do aluno que deseja consultar matricula: ").toUpperCase();
     const consultaAluno = listaAlunos.find(aluno => aluno.getNomeAluno() === nome);
@@ -143,8 +161,10 @@ function exibirMenu() {
         + "4-Consultar matricula\n"
         + "5-Cancelar matricula\n"
         + "6-Mudar de curso\n"
-        + "7- Adicionar aluno existente a um curso"
-        + "8-Sair");
+        + "7- Adicionar aluno existente a um curso\n"
+        + "8-Listar alunos\n"
+        + "9-Listar matriculas\n"
+        + "10-Sair");
 
     let escolha = Number(readlineSync.question("\nDigite a opcao: "));
 
@@ -169,8 +189,14 @@ function exibirMenu() {
             break;
         case 7:
             addAlunoExistenteNuloAUmCurso();
-            break
+            break;
         case 8:
+            listarAlunos();
+            break;
+        case 9:
+            listarMatriculas();
+            break;
+        case 10:
             console.log("Voce saiu do programa!");
             break;
         default:

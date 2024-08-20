@@ -45,6 +45,24 @@ var listarCursos = function () {
     }
     exibirMenu();
 };
+var listarAlunos = function () {
+    if (listaAlunos.length > 0) {
+        console.log(listaAlunos);
+    }
+    else {
+        console.log("Nao ha alunos cadastrados!");
+    }
+    exibirMenu();
+};
+var listarMatriculas = function () {
+    if (listaMatricula.length > 0) {
+        console.log(listaMatricula);
+    }
+    else {
+        console.log("Nao ha matriculas cadastradas!");
+    }
+    exibirMenu();
+};
 var consultarMatricula = function () {
     var nome = readlineSync.question("Digite o nome do aluno que deseja consultar matricula: ").toUpperCase();
     var consultaAluno = listaAlunos.find(function (aluno) { return aluno.getNomeAluno() === nome; });
@@ -139,7 +157,9 @@ function exibirMenu() {
         + "5-Cancelar matricula\n"
         + "6-Mudar de curso\n"
         + "7- Adicionar aluno existente a um curso\n"
-        + "8-Sair");
+        + "8-Listar alunos\n"
+        + "9-Listar matriculas\n"
+        + "10-Sair");
     var escolha = Number(readlineSync.question("\nDigite a opcao: "));
     switch (escolha) {
         case 1:
@@ -164,6 +184,12 @@ function exibirMenu() {
             addAlunoExistenteNuloAUmCurso();
             break;
         case 8:
+            listarAlunos();
+            break;
+        case 9:
+            listarMatriculas();
+            break;
+        case 10:
             console.log("Voce saiu do programa!");
             break;
         default:
