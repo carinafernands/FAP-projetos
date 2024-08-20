@@ -11,17 +11,18 @@ const cadastrarAluno = () => {
         exibirMenu();
         return;
     }
-    let nome = readlineSync.question("Digite o nome do aluno: ");
+    let nome = readlineSync.question("Digite o nome do aluno: ").toUpperCase();
     let dataNasc = readlineSync.question("Digite a data de nascimento: ");
 
-    const aluno = new Aluno(nome, dataNasc);
-    listaAlunos.push(aluno);
-    console.log(`Aluno: ${nome} cadastrado com sucesso!`);
 
     let nomeCurso = readlineSync.question("Digite o nome do curso que deseja matricular: ").toUpperCase();
     const curso = listaCursos.find(c => c.getNomeCurso() === nomeCurso);
     if (curso !== undefined) {
-        const matricula = new Matricula("19-08-2024", curso);
+        const aluno = new Aluno(nome, dataNasc);
+        listaAlunos.push(aluno);
+        console.log(`Aluno: ${nome} cadastrado com sucesso!`);
+
+        const matricula = new Matricula(new Date(), curso);
         listaMatricula.push(matricula);
         aluno.fazerMatricula(matricula, curso); // Associar matrícula ao aluno
         console.log(`Aluno: ${aluno.getNomeAluno()} matriculado no curso: ${curso.getNomeCurso()}`);
@@ -50,16 +51,18 @@ const listarCursos = () => {
 }
 
 const consultarMatricula = () => {
-    const nome = readlineSync.question("Digite o nome do aluno que deseja consultar matricula: ");
-    const consulta = listaAlunos.find(aluno => aluno.getNomeAluno() === nome);
-    if(consulta !== undefined){
-        console.log(consulta.getMatricula());
+    const nome = readlineSync.question("Digite o nome do aluno que deseja consultar matricula: ").toUpperCase();
+    const consultaAluno = listaAlunos.find(aluno => aluno.getNomeAluno() === nome);
+    if(consultaAluno !== undefined){
+        console.log(consultaAluno.getMatricula());
+    }else {
+        console.log("Aluno não matriculado")
     }
     exibirMenu();
 }
 
 const cancelarMatricula = () => {
-    const nome = readlineSync.question("Digite o nome do aluno para cancelar a matrícula: ");
+    const nome = readlineSync.question("Digite o nome do aluno para cancelar a matrícula: ").toUpperCase();
     const aluno = listaAlunos.find(a => a.getNomeAluno() === nome);
     if (aluno === undefined) {
         console.log("Aluno não encontrado.");
@@ -67,44 +70,29 @@ const cancelarMatricula = () => {
         return;
     }
 
-    const matriculaId = aluno.getMatricula()?.getId();
-    if (matriculaId === undefined) {
-        console.log("O aluno não está matriculado em nenhum curso.");
-        exibirMenu();
-        return;
+    const matricula = aluno.getMatricula();
+    if (matricula !== null) {
+        const nomeCurso = matricula.getCurso()?.getNomeCurso();
+        matricula.getCurso()?.removerAluno(aluno);
+        matricula.setCurso(null)
+        console.log(`Matrícula do aluno ${aluno.getNomeAluno()} no curso ${nomeCurso} cancelada com sucesso.`);
+    } else{
+        console.log("Aluno não está matriculado em nenhum curso")
     }
-
-    const curso = aluno.getCurso().split(" ")[3]; // Extrai o nome do curso da string
-    const cursoObj = listaCursos.find(c => c.getNomeCurso() === curso);
-    if (cursoObj === undefined) {
-        console.log("Curso não encontrado.");
-        exibirMenu();
-        return;
-    }
-
-    cursoObj.removerAluno(aluno);
-
-    // Remove a matrícula da lista
-    const matriculaIndex = listaMatricula.findIndex(m => m.getId() === matriculaId);
-    if (matriculaIndex !== -1) {
-        listaMatricula.splice(matriculaIndex, 1);
-    }
-
-    // Atualiza o aluno para não ter matrícula
-    aluno.fazerMatricula(null, cursoObj);
-
-    console.log(`Matrícula do aluno ${aluno.getNomeAluno()} no curso ${curso} cancelada com sucesso.`);
     exibirMenu();
 }
 
 const mudarCurso = () => {
-    if(listaCursos.length === 1){
-        console.log("So existe um curso cadastrado!");
+    if(listaCursos.length <= 1){
+        console.log("Impossível mudar de curso!");
         exibirMenu();
         return;
     }
-    const nome = readlineSync.question("Digite o nome do aluno que deseja mudar de curso: ");
+    const nome = readlineSync.question("Digite o nome do aluno que deseja mudar de curso: ").toUpperCase();
     const aluno = listaAlunos.find(c => c.getNomeAluno() === nome);
+    if (aluno?.getMatricula()?.getCurso === null) {
+        console.log("Aluno não está matriculado em nenhum curso")
+    }
     if (aluno !== undefined) {
         const nomeCurso = readlineSync.question("Digite o nome do novo curso que quer se matricular: ").toUpperCase();
         const curso = listaCursos.find(c => c.getNomeCurso() === nomeCurso);
@@ -119,6 +107,34 @@ const mudarCurso = () => {
     exibirMenu();
 }
 
+const addAlunoExistenteNuloAUmCurso = () => {
+    const nome = readlineSync.question("Digite o nome do aluno que deseja adicionar a um curso: ").toUpperCase();
+    const aluno = listaAlunos.find(c => c.getNomeAluno() === nome);
+
+    if (aluno === undefined) {
+        console.log("Aluno não encontrado.");
+        exibirMenu();
+        return;
+    }
+
+    if (aluno.getMatricula() !== null && aluno.getMatricula()?.getCurso() === null) {
+        const nomeCurso = readlineSync.question("Digite o nome do curso que deseja matricular o aluno: ").toUpperCase();
+        const curso = listaCursos.find(c => c.getNomeCurso() === nomeCurso);
+        
+        if (curso !== undefined) {
+            aluno.getMatricula()?.setCurso(curso);
+            curso.adicionarAlunos(aluno);
+            console.log(`Aluno ${aluno.getNomeAluno()} foi matriculado no curso ${curso.getNomeCurso()}.`);
+        } else {
+            console.log("Curso não encontrado.");
+        }
+    } else {
+        console.log("Aluno já está matriculado em um curso ou não possui matrícula.");
+    }
+
+    exibirMenu();
+}
+
 function exibirMenu() {
     console.log("===== MENU =====\n"
         + "1-Cadastrar aluno\n"
@@ -127,7 +143,8 @@ function exibirMenu() {
         + "4-Consultar matricula\n"
         + "5-Cancelar matricula\n"
         + "6-Mudar de curso\n"
-        + "7-Sair");
+        + "7- Adicionar aluno existente a um curso"
+        + "8-Sair");
 
     let escolha = Number(readlineSync.question("\nDigite a opcao: "));
 
@@ -151,6 +168,9 @@ function exibirMenu() {
             mudarCurso();
             break;
         case 7:
+            addAlunoExistenteNuloAUmCurso();
+            break
+        case 8:
             console.log("Voce saiu do programa!");
             break;
         default:

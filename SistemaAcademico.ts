@@ -24,14 +24,16 @@ export class Aluno {
     }
 
     public mudarCurso(curso: Curso): void{
-        if (this.matricula === null) {
+        if (this.matricula === null || this.matricula.getCurso() === null) {
             console.log("Aluno não está matriculado em nenhum curso.")
             return;
         }
-        this.matricula.getCurso().removerAluno(this);
-        this.matricula.setCurso(curso);
-        curso.adicionarAlunos(this);
-        console.log("Aluno mudou de curso");
+        const cursoAtual = this.matricula.getCurso();
+        if (cursoAtual?.removerAluno(this)) {
+            this.matricula.setCurso(curso);
+            curso.adicionarAlunos(this);
+            console.log("Aluno mudou de curso");
+        }
     }
 
 
@@ -39,7 +41,7 @@ export class Aluno {
         if (this.matricula?.getCurso() == null) { //encadeamento opcional 
             return "Aluno não está em nenhum curso";
         }else{
-            return "Aluno matriculado no curso " + this.matricula.getCurso().getNomeCurso();
+            return "Aluno matriculado no curso " + this.matricula.getCurso()?.getNomeCurso();
         }
     }
 
@@ -51,15 +53,19 @@ export class Aluno {
         return this.nomeAluno;
     }
 
+    public setMatricula(matricula: Matricula){
+        this.matricula = matricula
+    }
+
 }
 
 export class Matricula {
     private static idCounter: number = 0;
     private id: number;
-    private dataMatricula: string;
-    private curso: Curso;
+    private dataMatricula: Date;
+    private curso: Curso | null = null;
 
-    constructor(dataMatricula: string, curso: Curso) {
+    constructor(dataMatricula: Date, curso: Curso) {
         Matricula.idCounter += 1;
         this.id = Matricula.idCounter;
         this.dataMatricula = dataMatricula;
@@ -70,11 +76,11 @@ export class Matricula {
         return this.id;
     }
 
-    public getCurso(): Curso {
+    public getCurso(): Curso | null {
         return this.curso;
     }
 
-    public setCurso(curso: Curso): void {
+    public setCurso(curso: Curso | null): void {
         this.curso = curso;
     }
 }
@@ -94,13 +100,15 @@ export class Curso{
         this.cargaHoraria = cargaHoraria;
     }
 
-    public removerAluno(aluno: Aluno): void {
+    public removerAluno(aluno: Aluno): boolean {
         const index = this.alunos.indexOf(aluno);
         if (index !== -1) {
             this.alunos.splice(index, 1);
             console.log("Aluno removido do curso " + this.getNomeCurso());
+            return true;
         } else {
             console.log("Aluno não encontrado!");
+            return false;
         }
     }
 
@@ -123,4 +131,3 @@ export class Curso{
 // aluno.sairCurso(); // Aluno pediu para sair do curso: Curso TypeScript.
 
 // aluno.getCurso(); // Aluno não está em nenhum curso
-
