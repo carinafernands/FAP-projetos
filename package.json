@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@types/readline-sync": "^1.4.8",
+    "readline-sync": "^1.4.10",
+    "ts-node": "^10.9.2"
+  },
+  "name": "projeto",
+  "version": "1.0.0",
+  "main": "SistemaAcademico.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
