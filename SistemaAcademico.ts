@@ -34,15 +34,6 @@ export class Aluno {
         console.log("Aluno mudou de curso");
     }
 
-    public sairCurso(): void{
-        if (this.matricula !== null && this.matricula.getCurso() !== null) {
-            console.log("Aluno pediu para sair do curso: " + this.matricula.getCurso().getNomeCurso());
-            this.matricula.getCurso().removerAluno(this);
-            this.matricula = null;
-        } else {
-            console.log("Aluno não está matriculado em nenhum curso.");
-        }
-    }
 
     public getCurso(): string{ 
         if (this.matricula?.getCurso() == null) { //encadeamento opcional 
@@ -52,8 +43,8 @@ export class Aluno {
         }
     }
 
-    public getMatricula(): string{ // TO DO: fazer verificação se tem ou nao matricula 
-        return "Número de matricula " + this.matricula?.getId()+ " do aluno "+ this.nomeAluno ;
+    public getMatricula(): Matricula | null {
+        return this.matricula;
     }
 
     public getNomeAluno(): string{
@@ -62,39 +53,32 @@ export class Aluno {
 
 }
 
-export class Matricula{
+export class Matricula {
     private static idCounter: number = 0;
     private id: number;
     private dataMatricula: string;
     private curso: Curso;
 
-    constructor(dataMatricula: string, curso: Curso){
+    constructor(dataMatricula: string, curso: Curso) {
         Matricula.idCounter += 1;
         this.id = Matricula.idCounter;
         this.dataMatricula = dataMatricula;
         this.curso = curso;
     }
 
-    public cancelarMatricula(): void{ //TO DO?
-        console.log("Matrícula cancelada.");
-    }
-
-    public consultarMatricula(): void{
-        //TO DO: imprimir a matricula do aluno que chamar o metodo
-    }
-
-    public getId(){
+    public getId(): number {
         return this.id;
     }
 
-    public getCurso(): Curso{
+    public getCurso(): Curso {
         return this.curso;
     }
 
-    public setCurso(curso: Curso): void{
+    public setCurso(curso: Curso): void {
         this.curso = curso;
     }
 }
+
 
 export class Curso{
     private static idCounter: number = 0;
